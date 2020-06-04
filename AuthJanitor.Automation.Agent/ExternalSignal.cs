@@ -65,8 +65,7 @@ namespace AuthJanitor.Automation.Agent
             if (!secret.TaskConfirmationStrategies.HasFlag(TaskConfirmationStrategies.ExternalSignal))
                 return new BadRequestErrorMessageResult("This ManagedSecret cannot be used with External Signals");
 
-            if ((await _rekeyingTasks.Get(t => t.ManagedSecretId == secret.ObjectId))
-                                    .Any(t => t.RekeyingInProgress))
+            if (await IsInProgress(secret))
             {
                 return new OkObjectResult(RETURN_RETRY_SHORTLY);
             }
@@ -74,20 +73,20 @@ namespace AuthJanitor.Automation.Agent
             if ((secret.IsValid && secret.TimeRemaining <= TimeSpan.FromHours(_configuration.ExternalSignalRekeyableLeadTimeHours)) || !secret.IsValid)
             {
                 var executeRekeyingTask = Task.Run(async () =>
+                {
+                    var rekeyingTask = new RekeyingTask()
                     {
-                        var rekeyingTask = new RekeyingTask()
-                        {
-                            ManagedSecretId = secret.ObjectId,
-                            Expiry = secret.Expiry,
-                            Queued = DateTimeOffset.UtcNow,
-                            RekeyingInProgress = true
-                        };
-                        
-                        await _rekeyingTasks.Create(rekeyingTask).ConfigureAwait(false);
+                        ManagedSecretId = secret.ObjectId,
+                        Expiry = secret.Expiry,
+                        Queued = DateTimeOffset.UtcNow,
+                        RekeyingInProgress = true
+                    };
 
-                        await _taskExecutionMetaService.ExecuteTask(rekeyingTask.ObjectId).ConfigureAwait(false);
-                    });
-                
+                    await _rekeyingTasks.Create(rekeyingTask).ConfigureAwait(false);
+
+                    await _taskExecutionMetaService.ExecuteTask(rekeyingTask.ObjectId).ConfigureAwait(false);
+                });
+
                 var timeout = TimeSpan.FromSeconds(MAX_EXECUTION_SECONDS_BEFORE_RETRY);
                 var timeoutCancellationTokenSource = new CancellationTokenSource();
                 var timeoutTask = Task.Delay(timeout, timeoutCancellationTokenSource.Token);
@@ -111,6 +110,12 @@ namespace AuthJanitor.Automation.Agent
                 }
             }
             return new OkObjectResult(RETURN_NO_CHANGE);
+        }
+
+        private async Task<bool> IsInProgress(ManagedSecret secret)
+        {
+            return (await _rekeyingTasks.Get(t => t.ManagedSecretId == secret.ObjectId))
+                                                .Any(t => t.RekeyingInProgress);
         }
     }
 }
