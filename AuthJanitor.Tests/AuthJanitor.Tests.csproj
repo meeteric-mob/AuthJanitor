@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthJanitor.Automation.Agent\AuthJanitor.Automation.Agent.csproj" />
     <ProjectReference Include="..\AuthJanitor.Integrations.CryptographicImplementations.Default\AuthJanitor.Integrations.CryptographicImplementations.Default.csproj" />
   </ItemGroup>
 

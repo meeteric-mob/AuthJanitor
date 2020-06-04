@@ -9,6 +9,7 @@ using AuthJanitor.Integrations.DataStores;
 using AuthJanitor.Providers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -73,43 +74,56 @@ namespace AuthJanitor.Automation.Agent
             var returnResult = new OkObjectResult(RETURN_NO_CHANGE);
             if (IsExpiredOrWithinExpectedTimeframe(secret))
             {
-                var executeRekeyingTask = Task.Run(async () =>
-                {
-                    var rekeyingTask = new RekeyingTask()
-                    {
-                        ManagedSecretId = secret.ObjectId,
-                        Expiry = secret.Expiry,
-                        Queued = DateTimeOffset.UtcNow,
-                        RekeyingInProgress = true
-                    };
-
-                    await _rekeyingTasks.Create(rekeyingTask).ConfigureAwait(false);
-
-                    await _taskExecutionMetaService.ExecuteTask(rekeyingTask.ObjectId).ConfigureAwait(false);
-                });
-
-                var timeout = TimeSpan.FromSeconds(MAX_EXECUTION_SECONDS_BEFORE_RETRY);
-                var timeoutCancellationTokenSource = new CancellationTokenSource();
-                var timeoutTask = Task.Delay(timeout, timeoutCancellationTokenSource.Token);
-
-                var completedTask = await Task.WhenAny(executeRekeyingTask, timeoutTask);
-
-                // If the task that completed first was the timeout task we need to let the caller know it's still running
-                if (completedTask == timeoutTask)
-                {
-                    log.LogInformation("Rekeying workflow was started but exceeded the maximum request time! ({MaxExecutionRequestTime})", timeout);
-                    returnResult = new OkObjectResult(RETURN_RETRY_SHORTLY);
-                }
-                else
-                {
-                    // Signal that the timeout task can be canceled
-                    timeoutCancellationTokenSource.Cancel();
-
-                    // The rekeying task completed in time, let the caller know
-                    log.LogInformation("Completed rekeying workflow within maximum time! ({MaxExecutionRequestTime})", timeout);
-                    returnResult = new OkObjectResult(RETURN_CHANGE_OCCURRED);
-                }
+                returnResult = await RunTaskAndWaitForCompletionAnTimeout(log, secret);
             }
+            return returnResult;
+        }
+
+        private async Task<OkObjectResult> RunTaskAndWaitForCompletionAnTimeout(ILogger log, ManagedSecret secret)
+        {
+
+            var executeRekeyingTask = Task.Run(async () =>
+            {
+                var rekeyingTask = new RekeyingTask()
+                {
+                    ManagedSecretId = secret.ObjectId,
+                    Expiry = secret.Expiry,
+                    Queued = DateTimeOffset.UtcNow,
+                    RekeyingInProgress = true
+                };
+
+                await _rekeyingTasks.Create(rekeyingTask).ConfigureAwait(false);
+
+                await _taskExecutionMetaService.ExecuteTask(rekeyingTask.ObjectId).ConfigureAwait(false);
+            });
+            return await WaitForTaskExecutionOrCanceledDueTimeout(log, executeRekeyingTask);
+        }
+
+        private static async Task<OkObjectResult> WaitForTaskExecutionOrCanceledDueTimeout(ILogger log, Task executeRekeyingTask)
+        {
+            var returnResult = new OkObjectResult(null);
+            var timeout = TimeSpan.FromSeconds(MAX_EXECUTION_SECONDS_BEFORE_RETRY);
+            var timeoutCancellationTokenSource = new CancellationTokenSource();
+            var timeoutTask = Task.Delay(timeout, timeoutCancellationTokenSource.Token);
+
+            var completedTask = await Task.WhenAny(executeRekeyingTask, timeoutTask);
+
+            // If the task that completed first was the timeout task we need to let the caller know it's still running
+            if (completedTask == timeoutTask)
+            {
+                log.LogInformation("Rekeying workflow was started but exceeded the maximum request time! ({MaxExecutionRequestTime})", timeout);
+                returnResult = new OkObjectResult(RETURN_RETRY_SHORTLY);
+            }
+            else
+            {
+                // Signal that the timeout task can be canceled
+                timeoutCancellationTokenSource.Cancel();
+
+                // The rekeying task completed in time, let the caller know
+                log.LogInformation("Completed rekeying workflow within maximum time! ({MaxExecutionRequestTime})", timeout);
+                returnResult = new OkObjectResult(RETURN_CHANGE_OCCURRED);
+            }
+
             return returnResult;
         }
 
