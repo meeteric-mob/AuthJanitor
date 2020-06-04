@@ -49,9 +49,8 @@ namespace AuthJanitor.Automation.Agent
             _rekeyingTasks = rekeyingTaskStore;
         }
 
-        [FunctionName("ExternalSignal")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "secrets/{managedSecretId:guid}/{nonce}")] HttpRequest req,
+            HttpRequest req,
             Guid managedSecretId,
             string nonce,
             ILogger log)
