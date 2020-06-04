@@ -70,7 +70,7 @@ namespace AuthJanitor.Automation.Agent
                 return new OkObjectResult(RETURN_RETRY_SHORTLY);
             }
 
-            if ((secret.IsValid && secret.TimeRemaining <= TimeSpan.FromHours(_configuration.ExternalSignalRekeyableLeadTimeHours)) || !secret.IsValid)
+            if (IsExpiredOrWithinExpectedTimeframe(secret))
             {
                 var executeRekeyingTask = Task.Run(async () =>
                 {
@@ -110,6 +110,11 @@ namespace AuthJanitor.Automation.Agent
                 }
             }
             return new OkObjectResult(RETURN_NO_CHANGE);
+        }
+
+        private bool IsExpiredOrWithinExpectedTimeframe(ManagedSecret secret)
+        {
+            return (secret.IsValid && secret.TimeRemaining <= TimeSpan.FromHours(_configuration.ExternalSignalRekeyableLeadTimeHours)) || !secret.IsValid;
         }
 
         private async Task<bool> IsInProgress(ManagedSecret secret)
