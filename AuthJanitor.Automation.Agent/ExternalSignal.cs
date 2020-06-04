@@ -64,12 +64,13 @@ namespace AuthJanitor.Automation.Agent
                 return new BadRequestErrorMessageResult("Invalid ManagedSecret ID");
             if (!secret.TaskConfirmationStrategies.HasFlag(TaskConfirmationStrategies.ExternalSignal))
                 return new BadRequestErrorMessageResult("This ManagedSecret cannot be used with External Signals");
-
+            
             if (await IsInProgress(secret))
             {
                 return new OkObjectResult(RETURN_RETRY_SHORTLY);
             }
 
+            var returnResult = new OkObjectResult(RETURN_NO_CHANGE);
             if (IsExpiredOrWithinExpectedTimeframe(secret))
             {
                 var executeRekeyingTask = Task.Run(async () =>
@@ -97,7 +98,7 @@ namespace AuthJanitor.Automation.Agent
                 if (completedTask == timeoutTask)
                 {
                     log.LogInformation("Rekeying workflow was started but exceeded the maximum request time! ({MaxExecutionRequestTime})", timeout);
-                    return new OkObjectResult(RETURN_RETRY_SHORTLY);
+                    returnResult = new OkObjectResult(RETURN_RETRY_SHORTLY);
                 }
                 else
                 {
@@ -106,10 +107,10 @@ namespace AuthJanitor.Automation.Agent
 
                     // The rekeying task completed in time, let the caller know
                     log.LogInformation("Completed rekeying workflow within maximum time! ({MaxExecutionRequestTime})", timeout);
-                    return new OkObjectResult(RETURN_CHANGE_OCCURRED);
+                    returnResult = new OkObjectResult(RETURN_CHANGE_OCCURRED);
                 }
             }
-            return new OkObjectResult(RETURN_NO_CHANGE);
+            return returnResult;
         }
 
         private bool IsExpiredOrWithinExpectedTimeframe(ManagedSecret secret)
