@@ -29,48 +29,49 @@ namespace AuthJanitor.Providers
             IServiceProvider serviceProvider,
             IReadOnlyList<LoadedProviderMetadata> loadedProviders)
         {
+            _hmm = new DontKnow();
             _serviceProvider = serviceProvider;
             LoadedProviders = loadedProviders; 
         }
 
-        public bool HasProvider(string providerName) => LoadedProviders.Any(p => p.ProviderTypeName == providerName);
+        public bool HasProvider(ProviderIdentifier providerId) => LoadedProviders.Any(p => p.Id == providerId);
 
-        public LoadedProviderMetadata GetProviderMetadata(string providerName)
+        public IReadOnlyList<LoadedProviderMetadata> LoadedProviders { get; }
+
+        public LoadedProviderMetadata GetProviderMetadata(ProviderIdentifier providerId)
         {
-            if (!HasProvider(providerName))
-                throw new Exception($"Provider '{providerName}' not available!");
+            if (!HasProvider(providerId))
+                throw new Exception($"Provider '{providerId}' not available!");
             else
-                return LoadedProviders.First(p => p.ProviderTypeName == providerName);
+                return LoadedProviders.First(p => p.Id == providerId);
         }
 
-        public IAuthJanitorProvider GetProviderInstance(string providerName)
+        public IAuthJanitorProvider GetProviderInstance(ProviderIdentifier providerId)
         {
-            var metadata = GetProviderMetadata(providerName);
+            var metadata = GetProviderMetadata(providerId);
             return ActivatorUtilities.CreateInstance(_serviceProvider, metadata.ProviderType) as IAuthJanitorProvider;
         }
 
-        public IAuthJanitorProvider GetProviderInstance(string providerName, string serializedProviderConfiguration)
+        public IAuthJanitorProvider GetProviderInstance(ProviderIdentifier providerId, string serializedProviderConfiguration)
         {
-            var instance = GetProviderInstance(providerName);
+            var instance = GetProviderInstance(providerId);
             instance.SerializedConfiguration = serializedProviderConfiguration;
             return instance;
         }
 
-        public AuthJanitorProviderConfiguration GetProviderConfiguration(string name) => ActivatorUtilities.CreateInstance(_serviceProvider, GetProviderMetadata(name).ProviderConfigurationType) as AuthJanitorProviderConfiguration;
-        public AuthJanitorProviderConfiguration GetProviderConfiguration(string name, string serializedConfiguration) => JsonSerializer.Deserialize(serializedConfiguration, GetProviderMetadata(name).ProviderConfigurationType, SerializerOptions) as AuthJanitorProviderConfiguration;
+        public AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId) => ActivatorUtilities.CreateInstance(_serviceProvider, GetProviderMetadata(providerId).ProviderConfigurationType) as AuthJanitorProviderConfiguration;
+        public AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration) => JsonSerializer.Deserialize(serializedConfiguration, GetProviderMetadata(providerId).ProviderConfigurationType, SerializerOptions) as AuthJanitorProviderConfiguration;
 
         public async Task ExecuteRekeyingWorkflow(RekeyingAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers)
         {
             await _hmm.ExecuteRekeyingWorkflow(logger, validPeriod, providers);
         }
 
-        public bool TestProviderConfiguration(string name, string serializedConfiguration)
+        public bool TestProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration)
         {
-            var metadata = GetProviderMetadata(name);
+            var metadata = GetProviderMetadata(providerId);
             return _hmm.TestProviderConfiguration(metadata, serializedConfiguration);
         }
-
-        public IReadOnlyList<LoadedProviderMetadata> LoadedProviders { get; }
        
     }
 

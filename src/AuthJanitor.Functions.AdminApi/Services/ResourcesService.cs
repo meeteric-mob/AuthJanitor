@@ -51,11 +51,11 @@ namespace AuthJanitor.Services
 
             if (!_identityService.CurrentUserHasRole(AuthJanitorRoles.ResourceAdmin)) return new UnauthorizedResult();
 
-            var provider = _providerManager.GetProviderMetadata(resource.ProviderType);
+            var provider = _providerManager.GetProviderMetadata(resource.ProviderId);
             if (provider == null)
                 return new NotFoundObjectResult("Provider type not found");
 
-            if (!_providerManager.TestProviderConfiguration(provider.ProviderTypeName, resource.SerializedProviderConfiguration))
+            if (!_providerManager.TestProviderConfiguration(provider.Id, resource.SerializedProviderConfiguration))
                 return new BadRequestErrorMessageResult("Invalid Provider configuration!");
 
             Resource newResource = new Resource()
@@ -63,7 +63,7 @@ namespace AuthJanitor.Services
                 Name = resource.Name,
                 Description = resource.Description,
                 IsRekeyableObjectProvider = provider.IsRekeyableObjectProvider,
-                ProviderType = provider.ProviderTypeName,
+                ProviderId = provider.Id,
                 ProviderConfiguration = resource.SerializedProviderConfiguration
             };
 
@@ -123,11 +123,11 @@ namespace AuthJanitor.Services
 
             if (!_identityService.CurrentUserHasRole(AuthJanitorRoles.ResourceAdmin)) return new UnauthorizedResult();
 
-            var provider = _providerManager.GetProviderMetadata(resource.ProviderType);
+            var provider = _providerManager.GetProviderMetadata(resource.ProviderId);
             if (provider == null)
                 return new NotFoundObjectResult("Provider type not found");
 
-            if (!_providerManager.TestProviderConfiguration(provider.ProviderTypeName, resource.SerializedProviderConfiguration))
+            if (!_providerManager.TestProviderConfiguration(provider.Id, resource.SerializedProviderConfiguration))
                 return new BadRequestErrorMessageResult("Invalid Provider configuration!");
 
             Resource newResource = new Resource()
@@ -136,7 +136,7 @@ namespace AuthJanitor.Services
                 Name = resource.Name,
                 Description = resource.Description,
                 IsRekeyableObjectProvider = resource.IsRekeyableObjectProvider,
-                ProviderType = resource.ProviderType,
+                ProviderId = resource.ProviderId,
                 ProviderConfiguration = resource.SerializedProviderConfiguration
             };
 

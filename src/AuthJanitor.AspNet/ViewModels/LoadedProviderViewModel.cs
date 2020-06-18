@@ -7,7 +7,7 @@ namespace AuthJanitor.UI.Shared.ViewModels
     public class LoadedProviderViewModel : IAuthJanitorViewModel
     {
         public string OriginatingFile { get; set; }
-        public string ProviderTypeName { get; set; }
+        public ProviderIdentifier ProviderId { get; set; }
         public bool IsRekeyableObjectProvider { get; set; }
         public ProviderAttribute Details { get; set; }
         public string SvgImage { get; set; }

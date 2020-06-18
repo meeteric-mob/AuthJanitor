@@ -98,7 +98,7 @@
         ManagedResources = await Http.AJList<ResourceViewModel>();
         await Task.WhenAll(ManagedResources.Select(async resource =>
         {
-            resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(resource.ProviderType);
+            resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(resource.ProviderId.ToString());
             resource.ProviderConfiguration.SerializedConfiguration = resource.SerializedProviderConfiguration;
         }));
     }

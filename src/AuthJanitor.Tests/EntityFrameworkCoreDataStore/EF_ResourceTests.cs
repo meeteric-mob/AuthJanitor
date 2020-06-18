@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+using AuthJanitor.Providers;
 using AuthJanitor.UI.Shared.Models;
 using System;
 
@@ -16,7 +17,7 @@ namespace AuthJanitor.Tests.EntityFrameworkCoreDataStore
                 IsRekeyableObjectProvider = true,
                 Name = "Name",
                 ProviderConfiguration = "ProviderConfiguration",
-                ProviderType = "ProviderType"
+                ProviderId = ProviderIdentifier.FromString("ProviderType")
             };
         }
 
@@ -29,7 +30,7 @@ namespace AuthJanitor.Tests.EntityFrameworkCoreDataStore
                 IsRekeyableObjectProvider = false,
                 Name = "Another Name",
                 ProviderConfiguration = "Another ProviderConfiguration",
-                ProviderType = "Another ProviderType"
+                ProviderId = ProviderIdentifier.FromString("Another ProviderType")
             };
         }
 
@@ -40,7 +41,7 @@ namespace AuthJanitor.Tests.EntityFrameworkCoreDataStore
                 model1.IsRekeyableObjectProvider != model2.IsRekeyableObjectProvider ||
                 model1.Name != model2.Name ||
                 model1.ProviderConfiguration != model2.ProviderConfiguration ||
-                model1.ProviderType != model2.ProviderType)
+                model1.ProviderId != model2.ProviderId)
                 return false;
             return true;
         }

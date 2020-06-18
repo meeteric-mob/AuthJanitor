@@ -50,20 +50,20 @@ namespace AuthJanitor.Services
             return new OkObjectResult(_providerManager.LoadedProviders.Select(p => _providerViewModel(p)));
         }
 
-        public async Task<IActionResult> GetBlankConfiguration(string providerType)
+        public async Task<IActionResult> GetBlankConfiguration(ProviderIdentifier providerId)
         {
-            var provider = _providerManager.LoadedProviders.FirstOrDefault(p => p.ProviderTypeName == providerType);
+            var provider = _providerManager.LoadedProviders.FirstOrDefault(p => p.Id == providerId);
             if (provider == null)
             {
                 await _eventDispatcher.DispatchEvent(AuthJanitorSystemEvents.AnomalousEventOccurred, nameof(ProvidersService.GetBlankConfiguration), "Invalid Provider specified");
                 return new NotFoundResult();
             }
-            return new OkObjectResult(_configViewModel(_providerManager.GetProviderConfiguration(provider.ProviderTypeName)));
+            return new OkObjectResult(_configViewModel(_providerManager.GetProviderConfiguration(provider.Id)));
         }
 
         public async Task<IActionResult> TestConfiguration(
             string providerConfiguration,
-            string providerType,
+            ProviderIdentifier providerId,
             string testContext)
         {
             Enum.TryParse<TestAsContexts>(testContext, true, out TestAsContexts testContextEnum);
@@ -92,7 +92,7 @@ namespace AuthJanitor.Services
                     ex.StackTrace);
             }
 
-            var provider = _providerManager.LoadedProviders.FirstOrDefault(p => p.ProviderTypeName == providerType);
+            var provider = _providerManager.LoadedProviders.FirstOrDefault(p => p.Id == providerId);
             if (provider == null)
             {
                 await _eventDispatcher.DispatchEvent(AuthJanitorSystemEvents.AnomalousEventOccurred, nameof(ProvidersService.GetBlankConfiguration), "Invalid Provider specified");
@@ -101,7 +101,7 @@ namespace AuthJanitor.Services
 
             try
             {
-                var instance = _providerManager.GetProviderInstance(provider.ProviderTypeName, providerConfiguration);
+                var instance = _providerManager.GetProviderInstance(provider.Id, providerConfiguration);
                 if (instance == null)
                     return new BadRequestErrorMessageResult("Provider configuration is invalid!");
                 instance.Credential = credential;

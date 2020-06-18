@@ -7,6 +7,7 @@ namespace AuthJanitor.Providers
 {
     public class LoadedProviderMetadata
     {
+        public ProviderIdentifier Id { get; set; }
         /// <summary>
         /// Library file where Provider was loaded from
         /// </summary>

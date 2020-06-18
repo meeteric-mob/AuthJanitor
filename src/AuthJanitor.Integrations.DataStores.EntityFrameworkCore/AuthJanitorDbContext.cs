@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+using AuthJanitor.Providers;
 using AuthJanitor.UI.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,9 @@ namespace AuthJanitor.Integrations.DataStores.EntityFrameworkCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Resource>().Property(t => t.ProviderId).HasConversion(
+                tr => tr.ToString(),
+                tr => new ProviderIdentifier(tr));
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
     }

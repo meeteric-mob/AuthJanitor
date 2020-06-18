@@ -15,7 +15,7 @@ namespace AuthJanitor.UI.Shared.ViewModels
         public string Description { get; set; }
 
         public bool IsRekeyableObjectProvider { get; set; }
-        public string ProviderType { get; set; }
+        public ProviderIdentifier ProviderId { get; set; }
         public ProviderAttribute ProviderDetail { get; set; } = new ProviderAttribute()
         {
             Name = "No Provider Loaded",

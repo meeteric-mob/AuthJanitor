@@ -94,7 +94,7 @@ namespace AuthJanitor.UI.Shared
                     Details = provider.Details,
                     IsRekeyableObjectProvider = provider.IsRekeyableObjectProvider,
                     OriginatingFile = Path.GetFileName(provider.OriginatingFile),
-                    ProviderTypeName = provider.ProviderTypeName,
+                    ProviderId = provider.Id,
                     SvgImage = provider.SvgImage
                 };
 
@@ -107,7 +107,7 @@ namespace AuthJanitor.UI.Shared
                                 .Select(resource => serviceProvider.GetRequiredService<Func<Resource, ResourceViewModel>>()(resource));
             foreach (var resource in resources)
             {
-                var provider = providerManagerService.GetProviderInstance(resource.ProviderType, resource.SerializedProviderConfiguration);
+                var provider = providerManagerService.GetProviderInstance(resource.ProviderId, resource.SerializedProviderConfiguration);
                 resource.Risks = provider.GetRisks(secret.ValidPeriod);
                 resource.Description = provider.GetDescription();
             }
@@ -160,7 +160,7 @@ namespace AuthJanitor.UI.Shared
         private static ResourceViewModel GetViewModel(IServiceProvider serviceProvider, Resource resource)
         {
             var providerManagerService = serviceProvider.GetRequiredService<IProviderStore>();
-            var provider = providerManagerService.GetProviderInstance(resource.ProviderType, resource.ProviderConfiguration);
+            var provider = providerManagerService.GetProviderInstance(resource.ProviderId, resource.ProviderConfiguration);
 
             return new ResourceViewModel()
             {
@@ -168,8 +168,8 @@ namespace AuthJanitor.UI.Shared
                 Name = resource.Name,
                 Description = resource.Description,
                 IsRekeyableObjectProvider = resource.IsRekeyableObjectProvider,
-                ProviderType = resource.ProviderType,
-                ProviderDetail = providerManagerService.GetProviderMetadata(resource.ProviderType).Details,
+                ProviderId = resource.ProviderId,
+                ProviderDetail = providerManagerService.GetProviderMetadata(resource.ProviderId).Details,
                 SerializedProviderConfiguration = resource.ProviderConfiguration,
                 RuntimeDescription = provider.GetDescription(),
                 Risks = provider.GetRisks()

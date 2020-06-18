@@ -14,7 +14,7 @@ namespace AuthJanitor.Integrations.DataStores.EntityFrameworkCore.Configurations
             // TODO which properties are required?
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.IsRekeyableObjectProvider).IsRequired();
-            builder.Property(x => x.ProviderType).IsRequired();
+            builder.Property(x => x.ProviderId).IsRequired();
         }
     }
 }

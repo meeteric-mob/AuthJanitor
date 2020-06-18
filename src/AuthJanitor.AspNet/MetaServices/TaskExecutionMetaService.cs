@@ -132,7 +132,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
             try
             {
                 var providers = resources.Select(r => _providerManagerService.GetProviderInstance(
-                    r.ProviderType,
+                    r.ProviderId,
                     r.ProviderConfiguration)).ToList();
 
                 // Link in automation bindings from the outer flow

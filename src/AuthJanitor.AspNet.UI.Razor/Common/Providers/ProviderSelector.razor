@@ -4,13 +4,13 @@
         <SelectGroup Label="Application Lifecycle Providers">
             @foreach (var provider in Providers.Where(p => !p.IsRekeyableObjectProvider))
             {
-                <SelectItem Value="@provider.ProviderTypeName">@provider.Details.Name</SelectItem>
+                <SelectItem Value="@provider.ProviderId">@provider.Details.Name</SelectItem>
             }
         </SelectGroup>
         <SelectGroup Label="Rekeyable Object Providers">
             @foreach (var provider in Providers.Where(p => p.IsRekeyableObjectProvider))
             {
-                <SelectItem Value="@provider.ProviderTypeName">@provider.Details.Name</SelectItem>
+                <SelectItem Value="@provider.ProviderId">@provider.Details.Name</SelectItem>
             }
         </SelectGroup>
     }

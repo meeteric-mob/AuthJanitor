@@ -22,6 +22,7 @@ namespace AuthJanitor
                 .Where(type => !type.IsAbstract && typeof(IAuthJanitorProvider).IsAssignableFrom(type))
                 .Select(type => new LoadedProviderMetadata()
                 {
+                    Id = ProviderIdentifier.FromString(type.AssemblyQualifiedName),
                     OriginatingFile = Path.GetFileName(type.Assembly.Location),
                     AssemblyName = type.Assembly.GetName(),
                     ProviderTypeName = type.AssemblyQualifiedName,

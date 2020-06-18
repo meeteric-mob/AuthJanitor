@@ -9,13 +9,13 @@ namespace AuthJanitor.Providers
     {
         IReadOnlyList<LoadedProviderMetadata> LoadedProviders { get; }
 
-        IAuthJanitorProvider GetProviderInstance(string providerName, string serializedProviderConfiguration);
-        IAuthJanitorProvider GetProviderInstance(string providerName);
-        LoadedProviderMetadata GetProviderMetadata(string providerName);
-        AuthJanitorProviderConfiguration GetProviderConfiguration(string name);
+        IAuthJanitorProvider GetProviderInstance(ProviderIdentifier providerId, string serializedProviderConfiguration);
+        IAuthJanitorProvider GetProviderInstance(ProviderIdentifier providerId);
+        LoadedProviderMetadata GetProviderMetadata(ProviderIdentifier providerId);
+        AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId);
 
-        // Should be moved to antoher type
+        // Should be moved to another type
         Task ExecuteRekeyingWorkflow(RekeyingAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers);
-        bool TestProviderConfiguration(string name, string serializedConfiguration);
+        bool TestProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration);
     }
 }

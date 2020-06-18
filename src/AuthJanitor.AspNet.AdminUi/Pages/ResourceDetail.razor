@@ -20,7 +20,7 @@
     <Row Margin="Margin.Is2.OnY">
         <Column Margin="Margin.Is1.OnY" ColumnSize="ColumnSize.Is12">
             <ProviderSettingsCard ProviderConfiguration="@Resource.ProviderConfiguration" 
-                                    ProviderType="@Resource.ProviderType"
+                                    ProviderType="@Resource.ProviderId.ToString()"
                                     ShowEditControls="false" />
         </Column>
     </Row>
@@ -47,8 +47,8 @@
     {
         Resource = await Http.AJGet<ResourceViewModel>(Guid.Parse(ResourceId));
         var providers = await Http.AJList<LoadedProviderViewModel>();
-        _provider = providers.First(p => p.ProviderTypeName == Resource.ProviderType);
-        Resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(Resource.ProviderType);
+        _provider = providers.First(p => p.ProviderId == Resource.ProviderId);
+        Resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(Resource.ProviderId.ToString());
         Resource.ProviderConfiguration.SerializedConfiguration = Resource.SerializedProviderConfiguration;
     }
 }

@@ -13,7 +13,7 @@
     public TestAsContexts Context { get; set; }
 
     [Parameter]
-    public string ProviderType { get; set; }
+    public ProviderIdentifier ProviderId { get; set; }
 
     [Parameter]
     public ProviderConfigurationViewModel ProviderConfiguration { get; set; }
@@ -48,7 +48,7 @@
 
         try
         {
-            var result = await Http.PostAsync($"{Http.BaseAddress}/providers/{ProviderType}/test/{Context.ToString()}",
+            var result = await Http.PostAsync($"{Http.BaseAddress}/providers/{ProviderId}/test/{Context.ToString()}",
                 new System.Net.Http.StringContent(ProviderConfiguration.SerializedConfiguration));
             if (result.IsSuccessStatusCode)
             {

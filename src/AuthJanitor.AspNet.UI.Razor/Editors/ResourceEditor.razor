@@ -19,7 +19,7 @@
         <Field IsHorizontal="true" ColumnSize="ColumnSize.Is12">
             <FieldLabel ColumnSize="ColumnSize.Is4">Provider</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is8">
-                <ProviderSelector Value="@Value.ProviderType" ValueChanged="ProviderTypeChanged" />
+                <ProviderSelector Value="@Value.ProviderId.ToString()" ValueChanged="ProviderTypeChanged" />
             </FieldBody>
         </Field>
     </Row>
@@ -43,13 +43,13 @@
                    Padding="Padding.Is2.OnY">Use the buttons below to test the configuration in the context of either the current user or the AuthJanitor application.
         </Paragraph>
         <Column ColumnSize="ColumnSize.Is6" Class="text-center">
-            <ConfigurationTestButton ProviderType="@Value.ProviderType"
+            <ConfigurationTestButton ProviderType="@Value.ProviderId.ToString()"
                                      ProviderConfiguration="@Value.ProviderConfiguration"
                                      DefaultColor="Color.Secondary"
                                      Context="TestAsContexts.AsUser" />
         </Column>
         <Column ColumnSize="ColumnSize.Is6" Class="text-center">
-            <ConfigurationTestButton ProviderType="@Value.ProviderType"
+            <ConfigurationTestButton ProviderType="@Value.ProviderId.ToString()"
                                      ProviderConfiguration="@Value.ProviderConfiguration"
                                      DefaultColor="Color.Secondary"
                                      Context="TestAsContexts.AsApp" />
@@ -67,7 +67,7 @@
 
     protected async Task ProviderTypeChanged(string providerType)
     {
-        Value.ProviderType = providerType;
+        Value.ProviderId = ProviderIdentifier.FromString(providerType);
         Value.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(providerType);
     }
 }

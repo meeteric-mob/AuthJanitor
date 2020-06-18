@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 using AuthJanitor.DataStores;
+using AuthJanitor.Providers;
 using System;
 
 namespace AuthJanitor.UI.Shared.Models
@@ -12,7 +13,8 @@ namespace AuthJanitor.UI.Shared.Models
         public string Description { get; set; }
 
         public bool IsRekeyableObjectProvider { get; set; }
-        public string ProviderType { get; set; }
+        //public string ProviderType { get; set; }
+        public ProviderIdentifier ProviderId { get; set; }
         public string ProviderConfiguration { get; set; }
     }
 }

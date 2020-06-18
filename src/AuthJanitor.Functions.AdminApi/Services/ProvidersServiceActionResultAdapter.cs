@@ -39,17 +39,17 @@ namespace AuthJanitor.Services
             return await ValidateLogin(() => Task.FromResult(_providers.List()));
         }
 
-        public async Task<IActionResult> GetBlankConfiguration(string providerType)
+        public async Task<IActionResult> GetBlankConfiguration(ProviderIdentifier providerId)
         {
-            return await ValidateLogin(async () => await _providers.GetBlankConfiguration(providerType));
+            return await ValidateLogin(async () => await _providers.GetBlankConfiguration(providerId));
         }
 
         public async Task<IActionResult> TestConfiguration(
             string providerConfiguration,
-            string providerType,
+            ProviderIdentifier providerId,
             string testContext)
         {
-            return await ValidateLogin(async () => await _providers.TestConfiguration(providerConfiguration, providerType, testContext));
+            return await ValidateLogin(async () => await _providers.TestConfiguration(providerConfiguration, providerId, testContext));
         }
 
         private async Task<IActionResult> ValidateLogin(Func<Task<IActionResult>> func)

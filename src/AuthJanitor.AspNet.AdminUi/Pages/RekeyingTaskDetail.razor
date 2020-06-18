@@ -12,7 +12,7 @@
                             @foreach (var resource in Secret.Resources)
                             {
                                 <div style="width:2em; display:inline-block;" class="m-2">
-                                    @((MarkupString)_providers.FirstOrDefault(p => p.ProviderTypeName == resource.ProviderType)?.SvgImage)
+                                    @((MarkupString)_providers.FirstOrDefault(p => p.ProviderId == resource.ProviderId)?.SvgImage)
                                 </div>
                             }
                         </Column>
@@ -163,7 +163,7 @@
 
         await System.Threading.Tasks.Task.WhenAll(Task.ManagedSecret.Resources.Select(async resource =>
         {
-            resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(resource.ProviderType);
+            resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(resource.ProviderId.ToString());
             resource.ProviderConfiguration.SerializedConfiguration = resource.SerializedProviderConfiguration;
         }));
     }
