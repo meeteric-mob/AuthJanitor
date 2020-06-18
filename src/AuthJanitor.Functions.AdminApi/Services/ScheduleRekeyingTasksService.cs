@@ -20,7 +20,7 @@ namespace AuthJanitor.Services
     public class ScheduleRekeyingTasksService
     {
         private readonly AuthJanitorCoreConfiguration _configuration;
-        private readonly ProviderManagerService _providerManager;
+        private readonly IProviderStore _providerManager;
         private readonly EventDispatcherMetaService _eventDispatcherMetaService;
 
         private readonly IDataStore<ManagedSecret> _managedSecrets;
@@ -30,7 +30,7 @@ namespace AuthJanitor.Services
         public ScheduleRekeyingTasksService(
             IOptions<AuthJanitorCoreConfiguration> configuration,
             EventDispatcherMetaService eventDispatcherMetaService,
-            ProviderManagerService providerManager,
+            IProviderStore providerManager,
             IDataStore<ManagedSecret> managedSecretStore,
             IDataStore<Resource> resourceStore,
             IDataStore<RekeyingTask> rekeyingTaskStore)

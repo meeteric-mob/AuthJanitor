@@ -22,7 +22,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
         private readonly IDataStore<Resource> _resources;
         private readonly ISecureStorage _secureStorageProvider;
 
-        private readonly ProviderManagerService _providerManagerService;
+        private readonly IProviderStore _providerManagerService;
 
         private readonly EventDispatcherMetaService _eventDispatcherMetaService;
         private readonly IIdentityService _identityService;
@@ -30,7 +30,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
         public TaskExecutionMetaService(
             EventDispatcherMetaService eventDispatcherMetaService,
             IIdentityService identityService,
-            ProviderManagerService providerManagerService,
+            IProviderStore providerManagerService,
             IDataStore<ManagedSecret> managedSecrets,
             IDataStore<RekeyingTask> rekeyingTasks,
             IDataStore<Resource> resources,
