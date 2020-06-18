@@ -4,9 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -29,26 +27,13 @@ namespace AuthJanitor.Providers
 
         public ProviderManagerService(
             IServiceProvider serviceProvider,
-            params Type[] providerTypes)
+            IReadOnlyList<LoadedProviderMetadata> loadedProviders)
         {
             _serviceProvider = serviceProvider;
-            LoadedProviders = providerTypes
-                .Where(type => !type.IsAbstract && typeof(IAuthJanitorProvider).IsAssignableFrom(type))
-                .Select(type => new LoadedProviderMetadata()
-                {
-                    OriginatingFile = Path.GetFileName(type.Assembly.Location),
-                    AssemblyName = type.Assembly.GetName(),
-                    ProviderTypeName = type.AssemblyQualifiedName,
-                    ProviderType = type,
-                    ProviderConfigurationType = type.BaseType.GetGenericArguments()[0],
-                    Details = type.GetCustomAttribute<ProviderAttribute>(),
-                    SvgImage = type.GetCustomAttribute<ProviderImageAttribute>()?.SvgImage
-                })
-                .ToList()
-                .AsReadOnly();
+            LoadedProviders = loadedProviders; 
         }
 
-        public bool HasProvider(string providerName) => LoadedProviders.Any(p => p.  == providerName);
+        public bool HasProvider(string providerName) => LoadedProviders.Any(p => p.ProviderTypeName == providerName);
 
         public LoadedProviderMetadata GetProviderMetadata(string providerName)
         {
