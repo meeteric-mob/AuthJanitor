@@ -25,6 +25,7 @@ namespace AuthJanitor.Providers
         };
 
         private readonly IServiceProvider _serviceProvider;
+        private readonly DontKnow _hmm;
 
         public ProviderManagerService(
             IServiceProvider serviceProvider,
@@ -47,7 +48,7 @@ namespace AuthJanitor.Providers
                 .AsReadOnly();
         }
 
-        public bool HasProvider(string providerName) => LoadedProviders.Any(p => p.ProviderTypeName == providerName);
+        public bool HasProvider(string providerName) => LoadedProviders.Any(p => p.  == providerName);
 
         public LoadedProviderMetadata GetProviderMetadata(string providerName)
         {
@@ -73,6 +74,22 @@ namespace AuthJanitor.Providers
         public AuthJanitorProviderConfiguration GetProviderConfiguration(string name) => ActivatorUtilities.CreateInstance(_serviceProvider, GetProviderMetadata(name).ProviderConfigurationType) as AuthJanitorProviderConfiguration;
         public AuthJanitorProviderConfiguration GetProviderConfiguration(string name, string serializedConfiguration) => JsonSerializer.Deserialize(serializedConfiguration, GetProviderMetadata(name).ProviderConfigurationType, SerializerOptions) as AuthJanitorProviderConfiguration;
 
+        public async Task ExecuteRekeyingWorkflow(RekeyingAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers)
+        {
+            await _hmm.ExecuteRekeyingWorkflow(logger, validPeriod, providers);
+        }
+
+        public bool TestProviderConfiguration(string name, string serializedConfiguration)
+        {
+            return _hmm.TestProviderConfiguration(name, serializedConfiguration);
+        }
+
+        public IReadOnlyList<LoadedProviderMetadata> LoadedProviders { get; }
+       
+    }
+
+    class DontKnow
+    {
         public bool TestProviderConfiguration(string name, string serializedConfiguration)
         {
             try
@@ -84,12 +101,10 @@ namespace AuthJanitor.Providers
             catch { return false; }
         }
 
-        public IReadOnlyList<LoadedProviderMetadata> LoadedProviders { get; }
-
         public async Task ExecuteRekeyingWorkflow(
-            RekeyingAttemptLogger logger,
-            TimeSpan validPeriod,
-            IEnumerable<IAuthJanitorProvider> providers)
+           RekeyingAttemptLogger logger,
+           TimeSpan validPeriod,
+           IEnumerable<IAuthJanitorProvider> providers)
         {
             logger.LogInformation("########## BEGIN REKEYING WORKFLOW ##########");
             var rkoProviders = providers.OfType<IRekeyableObjectProvider>().ToList();
@@ -107,7 +122,7 @@ namespace AuthJanitor.Providers
             logger.LogInformation("### Performing Provider Tests.");
 
             await PerformProviderActions(
-                logger, 
+                logger,
                 providers,
                 p => p.Test(),
                 "Error running sanity test on provider '{ProviderName}'",
@@ -150,12 +165,12 @@ namespace AuthJanitor.Providers
                 logger,
                 rkoProviders,
                 p => p.Rekey(validPeriod)
-                        .ContinueWith(t => 
-                        { 
-                            if (t.Result != null) 
+                        .ContinueWith(t =>
+                        {
+                            if (t.Result != null)
                             {
                                 newSecrets.Add(t.Result);
-                            } 
+                            }
                         }),
                 "Error rekeying provider '{ProviderName}'",
                 "Error rekeying one or more Rekeyable Object Providers!");
@@ -185,7 +200,7 @@ namespace AuthJanitor.Providers
                 p => p.AfterRekeying(),
                 "Error running post-rekey operations on provider '{ProviderName}'",
                 "Error running post-rekey operations on one or more Application Lifecycle Providers!");
-            
+
             // -----
 
             logger.LogInformation("### Completing finalizing operations on Rekeyable Object Providers...");
@@ -201,10 +216,10 @@ namespace AuthJanitor.Providers
         }
 
         private static async Task PerformProviderActions<TProviderType>(
-            ILogger logger, 
-            IEnumerable<TProviderType> providers, 
-            Func<TProviderType, Task> providerAction, 
-            string individualFailureErrorLogMessageTemplate, 
+            ILogger logger,
+            IEnumerable<TProviderType> providers,
+            Func<TProviderType, Task> providerAction,
+            string individualFailureErrorLogMessageTemplate,
             string anyFailureExceptionMessage)
             where TProviderType : IAuthJanitorProvider
         {
@@ -233,3 +248,4 @@ namespace AuthJanitor.Providers
         }
     }
 }
+
