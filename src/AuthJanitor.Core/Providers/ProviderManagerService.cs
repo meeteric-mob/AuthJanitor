@@ -66,7 +66,8 @@ namespace AuthJanitor.Providers
 
         public bool TestProviderConfiguration(string name, string serializedConfiguration)
         {
-            return _hmm.TestProviderConfiguration(name, serializedConfiguration);
+            var metadata = GetProviderMetadata(name);
+            return _hmm.TestProviderConfiguration(metadata, serializedConfiguration);
         }
 
         public IReadOnlyList<LoadedProviderMetadata> LoadedProviders { get; }
@@ -75,12 +76,11 @@ namespace AuthJanitor.Providers
 
     class DontKnow
     {
-        public bool TestProviderConfiguration(string name, string serializedConfiguration)
+        public bool TestProviderConfiguration(LoadedProviderMetadata metadata, string serializedConfiguration)
         {
             try
             {
-                var metadata = GetProviderMetadata(name);
-                var obj = JsonSerializer.Deserialize(serializedConfiguration, metadata.ProviderConfigurationType, SerializerOptions);
+                var obj = JsonSerializer.Deserialize(serializedConfiguration, metadata.ProviderConfigurationType, ProviderManagerService.SerializerOptions);
                 return obj != null;
             }
             catch { return false; }
