@@ -24,11 +24,11 @@ namespace AuthJanitor.Services
         private readonly Func<ManagedSecret, ManagedSecretViewModel> _managedSecretViewModel;
 
         private readonly IIdentityService _identityService;
-        private readonly ProviderManagerService _providerManager;
+        private readonly IProviderStore _providerManager;
 
         public DashboardService(
             IIdentityService identityService,
-            ProviderManagerService providerManager,
+            IProviderStore providerManager,
             IDataStore<ManagedSecret> managedSecretStore,
             IDataStore<Resource> resourceStore,
             IDataStore<RekeyingTask> rekeyingTaskStore,

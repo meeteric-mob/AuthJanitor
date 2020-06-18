@@ -100,7 +100,7 @@ namespace AuthJanitor.UI.Shared
 
         private static ManagedSecretViewModel GetViewModel(IServiceProvider serviceProvider, ManagedSecret secret, CancellationToken cancellationToken)
         {
-            var providerManagerService = serviceProvider.GetRequiredService<ProviderManagerService>();
+            var providerManagerService = serviceProvider.GetRequiredService<IProviderStore>();
             var resources = secret.ResourceIds
                                 .Select(resourceId => serviceProvider.GetRequiredService<IDataStore<Resource>>()
                                                                     .GetOne(resourceId, cancellationToken).Result)
@@ -159,7 +159,7 @@ namespace AuthJanitor.UI.Shared
 
         private static ResourceViewModel GetViewModel(IServiceProvider serviceProvider, Resource resource)
         {
-            var providerManagerService = serviceProvider.GetRequiredService<ProviderManagerService>();
+            var providerManagerService = serviceProvider.GetRequiredService<IProviderStore>();
             var provider = providerManagerService.GetProviderInstance(resource.ProviderType, resource.ProviderConfiguration);
 
             return new ResourceViewModel()

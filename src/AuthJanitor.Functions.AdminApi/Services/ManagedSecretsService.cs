@@ -27,7 +27,7 @@ namespace AuthJanitor.Services
         private readonly AuthJanitorCoreConfiguration _configuration;
         private readonly IIdentityService _identityService;
         private readonly ICryptographicImplementation _cryptographicImplementation;
-        private readonly ProviderManagerService _providerManager;
+        private readonly IProviderStore _providerManager;
         private readonly EventDispatcherMetaService _eventDispatcher;
 
         private readonly IDataStore<ManagedSecret> _managedSecrets;
@@ -39,7 +39,7 @@ namespace AuthJanitor.Services
             IIdentityService identityService,
             ICryptographicImplementation cryptographicImplementation,
             EventDispatcherMetaService eventDispatcher,
-            ProviderManagerService providerManager,
+            IProviderStore providerManager,
             IDataStore<ManagedSecret> managedSecretStore,
             IDataStore<Resource> resourceStore,
             Func<ManagedSecret, ManagedSecretViewModel> managedSecretViewModelDelegate)

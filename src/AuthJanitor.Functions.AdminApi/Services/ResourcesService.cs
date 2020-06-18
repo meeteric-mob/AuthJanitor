@@ -24,7 +24,7 @@ namespace AuthJanitor.Services
     public class ResourcesService
     {
         private readonly IIdentityService _identityService;
-        private readonly ProviderManagerService _providerManager;
+        private readonly IProviderStore _providerManager;
         private readonly EventDispatcherMetaService _eventDispatcher;
 
         private readonly IDataStore<Resource> _resources;
@@ -33,7 +33,7 @@ namespace AuthJanitor.Services
         public ResourcesService(
             IIdentityService identityService,
             EventDispatcherMetaService eventDispatcher,
-            ProviderManagerService providerManager,
+            IProviderStore providerManager,
             IDataStore<Resource> resourceStore,
             Func<Resource, ResourceViewModel> resourceViewModelDelegate)
         {

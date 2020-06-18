@@ -28,7 +28,7 @@ namespace AuthJanitor.Services
         private readonly AuthJanitorCoreConfiguration _configuration;
         private readonly IIdentityService _identityService;
         private readonly TaskExecutionMetaService _taskExecutionMetaService;
-        private readonly ProviderManagerService _providerManager;
+        private readonly IProviderStore _providerManager;
         private readonly EventDispatcherMetaService _eventDispatcher;
 
         private readonly IDataStore<ManagedSecret> _managedSecrets;
@@ -40,7 +40,7 @@ namespace AuthJanitor.Services
             IIdentityService identityService,
             TaskExecutionMetaService taskExecutionMetaService,
             EventDispatcherMetaService eventDispatcher,
-            ProviderManagerService providerManager,
+            IProviderStore providerManager,
             IDataStore<ManagedSecret> managedSecretStore,
             IDataStore<RekeyingTask> rekeyingTaskStore,
             Func<RekeyingTask, RekeyingTaskViewModel> rekeyingTaskViewModelDelegate)

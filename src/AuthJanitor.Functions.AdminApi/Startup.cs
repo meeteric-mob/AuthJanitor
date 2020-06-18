@@ -111,7 +111,7 @@ namespace AuthJanitor
 
             logger.LogInformation("Found {ProviderCount} providers: {ProviderTypeNames}", providerTypes.Length, string.Join("  ", providerTypes.Select(t => t.Name)));
             logger.LogInformation("Registering Provider Manager Service");
-            ProviderManagerService.ConfigureServices(builder.Services, providerTypes);
+            IProviderStore.ConfigureServices(builder.Services, providerTypes);
         }
     }
 }

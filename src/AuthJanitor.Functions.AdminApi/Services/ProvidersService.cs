@@ -25,7 +25,7 @@ namespace AuthJanitor.Services
     {
         private readonly IIdentityService _identityService;
         private readonly EventDispatcherMetaService _eventDispatcher;
-        private readonly ProviderManagerService _providerManager;
+        private readonly IProviderStore _providerManager;
 
         private readonly Func<AuthJanitorProviderConfiguration, ProviderConfigurationViewModel> _configViewModel;
         private readonly Func<LoadedProviderMetadata, LoadedProviderViewModel> _providerViewModel;
@@ -33,7 +33,7 @@ namespace AuthJanitor.Services
         public ProvidersService(
             IIdentityService identityService,
             EventDispatcherMetaService eventDispatcher,
-            ProviderManagerService providerManager,
+            IProviderStore providerManager,
             Func<AuthJanitorProviderConfiguration, ProviderConfigurationViewModel> configViewModelDelegate,
             Func<LoadedProviderMetadata, LoadedProviderViewModel> providerViewModelDelegate)
         {
