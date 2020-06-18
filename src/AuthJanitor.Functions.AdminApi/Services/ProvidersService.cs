@@ -45,19 +45,15 @@ namespace AuthJanitor.Services
             _providerViewModel = providerViewModelDelegate;
         }
 
-        public IActionResult List(HttpRequest req)
+        public IActionResult List()
         {
-            _ = req;
-
             if (!_identityService.IsUserLoggedIn) return new UnauthorizedResult();
 
             return new OkObjectResult(_providerManager.LoadedProviders.Select(p => _providerViewModel(p)));
         }
 
-        public async Task<IActionResult> GetBlankConfiguration(HttpRequest req, string providerType)
+        public async Task<IActionResult> GetBlankConfiguration(string providerType)
         {
-            _ = req;
-
             if (!_identityService.IsUserLoggedIn) return new UnauthorizedResult();
 
             var provider = _providerManager.LoadedProviders.FirstOrDefault(p => p.ProviderTypeName == providerType);
@@ -71,12 +67,9 @@ namespace AuthJanitor.Services
 
         public async Task<IActionResult> TestConfiguration(
             string providerConfiguration,
-            HttpRequest req,
             string providerType,
             string testContext)
         {
-            _ = req;
-
             if (!_identityService.IsUserLoggedIn) return new UnauthorizedResult();
 
             Enum.TryParse<TestAsContexts>(testContext, true, out TestAsContexts testContextEnum);
