@@ -23,27 +23,27 @@ namespace AuthJanitor.Functions
         }
 
         [FunctionName("Providers-List")]
-        public IActionResult List([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers")] HttpRequest req)
+        public IActionResult List([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers")] HttpRequest _)
         {
-            return _service.List(req);
+            return _service.List();
         }
 
         [FunctionName("Providers-GetBlankConfiguration")]
         public async Task<IActionResult> GetBlankConfiguration(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers/{providerType}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers/{providerType}")] HttpRequest _,
             string providerType)
         {
-            return await _service.GetBlankConfiguration(req, providerType);
+            return await _service.GetBlankConfiguration(providerType);
         }
 
         [FunctionName("Providers-TestConfiguration")]
         public async Task<IActionResult> TestConfiguration(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "providers/{providerType}/test/{testContext}")] string providerConfiguration,
-            HttpRequest req,
+            HttpRequest _,
             string providerType,
             string testContext)
         {
-            return await _service.TestConfiguration(providerConfiguration, req, providerType, testContext);
+            return await _service.TestConfiguration(providerConfiguration, providerType, testContext);
         }
     }
 }
