@@ -49,7 +49,7 @@ namespace AuthJanitor
             builder.Services.AddHttpContextAccessor();
 
             logger.LogDebug("Registering Azure AD Identity Service");
-            builder.Services.AddAJAzureActiveDirectory<AzureADIdentityServiceConfiguration>(o =>
+            builder.Services.AddAJAzureActiveDirectory(o =>
             {
                 o.ClientId = Environment.GetEnvironmentVariable("CLIENT_ID", EnvironmentVariableTarget.Process);
                 o.ClientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET", EnvironmentVariableTarget.Process);

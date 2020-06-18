@@ -45,7 +45,7 @@ namespace AuthJanitor
             builder.Services.AddOptions();
 
             logger.LogDebug("Registering Azure AD Identity Service");
-            builder.Services.AddAJAzureActiveDirectory<AzureADIdentityServiceConfiguration>(o =>
+            builder.Services.AddAJAzureActiveDirectory(o =>
             {
                 o.ClientId = "clientId";
                 o.ClientSecret = "clientSecret";

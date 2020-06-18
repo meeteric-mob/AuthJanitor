@@ -48,17 +48,12 @@ namespace AuthJanitor.Integrations.IdentityServices.AzureActiveDirectory
             _httpContextAccessor = httpContextAccessor;
         }
 
-#if DEBUG
-        private static bool IsRunningLocally => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID"));
-#endif
+
 
         /// <summary>
         /// Return if there is currently a user logged in (with any valid AuthJanitor role)
         /// </summary>
         public bool IsUserLoggedIn =>
-#if DEBUG
-            IsRunningLocally ? true :
-#endif
             (_httpContextAccessor.HttpContext?.Request?.Headers[HTTP_HEADER_NAME] ?? string.Empty) == HTTP_HEADER_VALUE &&
             _httpContextAccessor.HttpContext?.User.Claims != null &&
             GetClaimsInternal(ROLES_CLAIM).Any(r => AuthJanitorRoles.ALL_ROLES.Contains(r));
@@ -81,9 +76,6 @@ namespace AuthJanitor.Integrations.IdentityServices.AzureActiveDirectory
         /// Return a list of the current user's roles
         /// </summary>
         public string[] UserRoles =>
-#if DEBUG
-            IsRunningLocally ? new string[] { AuthJanitorRoles.GlobalAdmin } :
-#endif
             IsUserLoggedIn ? GetClaimsInternal(ROLES_CLAIM).ToArray()
                            : new string[0];
 
@@ -92,9 +84,6 @@ namespace AuthJanitor.Integrations.IdentityServices.AzureActiveDirectory
         /// </summary>
         /// <param name="authJanitorRole">Role to test</param>
         public bool CurrentUserHasRole(string authJanitorRole) =>
-#if DEBUG
-            IsRunningLocally ? true :
-#endif
             IsUserLoggedIn ? GetClaimsInternal(ROLES_CLAIM).Any(r => r.Equals(authJanitorRole) || r.Equals(AuthJanitorRoles.GlobalAdmin))
                            : false;
 
@@ -156,9 +145,6 @@ namespace AuthJanitor.Integrations.IdentityServices.AzureActiveDirectory
         }
 
         private IEnumerable<string> GetClaimsInternal(string claimType) =>
-#if DEBUG
-            IsRunningLocally ? new string[] { "#DEBUG#" } :
-#endif
             (_httpContextAccessor.HttpContext == null ||
              _httpContextAccessor.HttpContext.User == null ||
              _httpContextAccessor.HttpContext.User.Claims == null) ? new string[0] :
