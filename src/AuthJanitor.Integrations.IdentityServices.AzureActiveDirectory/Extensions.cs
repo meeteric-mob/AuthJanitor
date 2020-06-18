@@ -8,10 +8,19 @@ namespace AuthJanitor.Integrations.IdentityServices.AzureActiveDirectory
 {
     public static class Extensions
     {
-        public static void AddAJAzureActiveDirectory<TOptions>(this IServiceCollection serviceCollection, Action<AzureADIdentityServiceConfiguration> configureOptions)
+        public static void AddAJAzureActiveDirectory(this IServiceCollection serviceCollection, Action<AzureADIdentityServiceConfiguration> configureOptions)
         {
-            serviceCollection.Configure<AzureADIdentityServiceConfiguration>(configureOptions);
-            serviceCollection.AddSingleton<IIdentityService, AzureADIdentityService>();
+            serviceCollection.Configure(configureOptions);
+
+            serviceCollection.AddSingleton(p =>
+            {
+                IIdentityService service = p.GetService<AzureADIdentityService>(); ;
+
+#if DEBUG
+                    service = new LocalDebugIdentityServiceDecorator(service);
+#endif
+                return service;
+            });
         }
     }
 }
