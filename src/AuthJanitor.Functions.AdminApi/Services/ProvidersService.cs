@@ -47,15 +47,11 @@ namespace AuthJanitor.Services
 
         public IActionResult List()
         {
-            if (!_identityService.IsUserLoggedIn) return new UnauthorizedResult();
-
             return new OkObjectResult(_providerManager.LoadedProviders.Select(p => _providerViewModel(p)));
         }
 
         public async Task<IActionResult> GetBlankConfiguration(string providerType)
         {
-            if (!_identityService.IsUserLoggedIn) return new UnauthorizedResult();
-
             var provider = _providerManager.LoadedProviders.FirstOrDefault(p => p.ProviderTypeName == providerType);
             if (provider == null)
             {
@@ -70,8 +66,6 @@ namespace AuthJanitor.Services
             string providerType,
             string testContext)
         {
-            if (!_identityService.IsUserLoggedIn) return new UnauthorizedResult();
-
             Enum.TryParse<TestAsContexts>(testContext, true, out TestAsContexts testContextEnum);
             AccessTokenCredential credential = null;
             try
