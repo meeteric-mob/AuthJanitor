@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace AuthJanitor.Providers
 {
 
-    public class IProviderStore
+    public class ProviderManagerService : IProviderStore
     {
         public static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions()
         {
@@ -26,7 +26,7 @@ namespace AuthJanitor.Providers
 
         private readonly IServiceProvider _serviceProvider;
 
-        public IProviderStore(
+        public ProviderManagerService(
             IServiceProvider serviceProvider,
             params Type[] providerTypes)
         {
@@ -45,11 +45,6 @@ namespace AuthJanitor.Providers
                 })
                 .ToList()
                 .AsReadOnly();
-        }
-
-        public static void ConfigureServices(IServiceCollection serviceCollection, params Type[] loadedProviderTypes)
-        {
-            serviceCollection.AddSingleton<IProviderStore>((s) => new IProviderStore(s, loadedProviderTypes));
         }
 
         public bool HasProvider(string providerName) => LoadedProviders.Any(p => p.ProviderTypeName == providerName);
