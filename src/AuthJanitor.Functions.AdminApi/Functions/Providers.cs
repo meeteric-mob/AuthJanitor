@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+using AuthJanitor.Providers;
 using AuthJanitor.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,17 +24,17 @@ namespace AuthJanitor.Functions
         }
 
         [FunctionName("Providers-List")]
-        public IActionResult List([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers")] HttpRequest _)
+        public IActionResult List([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers")] HttpRequest req)
         {
             return _service.List();
         }
 
         [FunctionName("Providers-GetBlankConfiguration")]
         public async Task<IActionResult> GetBlankConfiguration(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers/{providerType}")] HttpRequest _,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "providers/{providerType}")] HttpRequest req,
             string providerType)
         {
-            return await _service.GetBlankConfiguration(providerType);
+            return await _service.GetBlankConfiguration(ProviderIdentifier.FromString(providerType));
         }
 
         [FunctionName("Providers-TestConfiguration")]
@@ -43,7 +44,9 @@ namespace AuthJanitor.Functions
             string providerType,
             string testContext)
         {
-            return await _service.TestConfiguration(providerConfiguration, providerType, testContext);
+            return await _service.TestConfiguration(providerConfiguration, 
+                ProviderIdentifier.FromString(providerType), 
+                testContext);
         }
     }
 }
