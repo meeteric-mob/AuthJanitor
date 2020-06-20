@@ -13,7 +13,6 @@ namespace AuthJanitor.UI.Shared.Models
         public string Description { get; set; }
 
         public bool IsRekeyableObjectProvider { get; set; }
-        //public string ProviderType { get; set; }
         public ProviderIdentifier ProviderId { get; set; }
         public string ProviderConfiguration { get; set; }
     }
