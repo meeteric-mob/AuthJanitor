@@ -16,9 +16,9 @@ namespace AuthJanitor.Tests.EntityFrameworkCoreDataStore
             {
                 ObjectId = Guid.NewGuid(),
                 AvailabilityScheduleId = Guid.NewGuid(),
-                Attempts = new List<RekeyingAttemptLogger>()
+                Attempts = new List<WorkflowAttemptLogger>()
                 {
-                    new RekeyingAttemptLogger()
+                    new WorkflowAttemptLogger()
                     {
                         AttemptStarted = new DateTimeOffset(DateTime.Now),
                         AttemptFinished = new DateTimeOffset(DateTime.Now),
@@ -47,9 +47,9 @@ namespace AuthJanitor.Tests.EntityFrameworkCoreDataStore
             {
                 ObjectId = model.ObjectId,
                 AvailabilityScheduleId = Guid.NewGuid(),
-                Attempts = new List<RekeyingAttemptLogger>()
+                Attempts = new List<WorkflowAttemptLogger>()
                 {
-                    new RekeyingAttemptLogger()
+                    new WorkflowAttemptLogger()
                     {
                         AttemptStarted = new DateTimeOffset(DateTime.Now),
                         AttemptFinished = new DateTimeOffset(DateTime.Now),

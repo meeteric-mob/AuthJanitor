@@ -25,6 +25,6 @@ namespace AuthJanitor.UI.Shared.ViewModels
 
         public ManagedSecretViewModel ManagedSecret { get; set; } = new ManagedSecretViewModel();
 
-        public List<RekeyingAttemptLogger> Attempts { get; set; } = new List<RekeyingAttemptLogger>();
+        public List<WorkflowAttemptLogger> Attempts { get; set; } = new List<WorkflowAttemptLogger>();
     }
 }

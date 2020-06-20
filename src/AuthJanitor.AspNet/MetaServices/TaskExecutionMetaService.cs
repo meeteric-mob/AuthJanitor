@@ -72,7 +72,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
             // Prepare record
             var task = await _rekeyingTasks.GetOne(taskId, cancellationToken);
             task.RekeyingInProgress = true;
-            var rekeyingAttemptLog = new RekeyingAttemptLogger();
+            var rekeyingAttemptLog = new WorkflowAttemptLogger();
             task.Attempts.Add(rekeyingAttemptLog);
             await _rekeyingTasks.Update(task, cancellationToken);
 

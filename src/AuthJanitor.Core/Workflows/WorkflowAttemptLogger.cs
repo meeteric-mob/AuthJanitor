@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace AuthJanitor.Providers
 {
-    public class RekeyingAttemptLogger : ILogger
+    public class WorkflowAttemptLogger : ILogger
     {
         public bool IsSuccessfulAttempt => string.IsNullOrEmpty(OuterException);
         public string OuterException { get; set; }
@@ -21,8 +21,8 @@ namespace AuthJanitor.Providers
         public ILogger ChainedLogger { get; set; }
         public string LogString { get; set; }
 
-        public RekeyingAttemptLogger() => AttemptStarted = DateTimeOffset.UtcNow;
-        public RekeyingAttemptLogger(ILogger chainedLogger) : this()
+        public WorkflowAttemptLogger() => AttemptStarted = DateTimeOffset.UtcNow;
+        public WorkflowAttemptLogger(ILogger chainedLogger) : this()
         {
             ChainedLogger = chainedLogger;
         }

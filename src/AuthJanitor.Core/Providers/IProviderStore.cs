@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AuthJanitor.Providers
@@ -15,7 +14,7 @@ namespace AuthJanitor.Providers
         AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId);
 
         // Should be moved to another type
-        Task ExecuteRekeyingWorkflow(RekeyingAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers);
+        Task ExecuteRekeyingWorkflow(WorkflowAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers);
         bool TestProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration);
     }
 }
