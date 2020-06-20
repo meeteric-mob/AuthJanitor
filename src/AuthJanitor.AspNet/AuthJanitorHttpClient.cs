@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+using AuthJanitor.Providers;
 using AuthJanitor.UI.Shared.ViewModels;
 using Newtonsoft.Json;
 using System;
@@ -46,9 +47,9 @@ namespace AuthJanitor.UI.Shared
             .ContinueWith(t => GetFromContentPayload<T>(t.Result))
             .Unwrap();
 
-        public Task<T> AJGet<T>(string name) where T : IAuthJanitorViewModel => this
+        public Task<T> AJGet<T>(ProviderIdentifier providerId) where T : IAuthJanitorViewModel => this
             .AssertRequestIsSane<T>()
-            .GetAsync($"{BaseAddress}/{ApiFormatStrings[typeof(T)]}/{name}")
+            .GetAsync($"{BaseAddress}/{ApiFormatStrings[typeof(T)]}/{providerId.Value}")
             .ContinueWith(t => GetFromContentPayload<T>(t.Result))
             .Unwrap();
 

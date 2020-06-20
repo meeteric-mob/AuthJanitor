@@ -48,7 +48,7 @@
         Resource = await Http.AJGet<ResourceViewModel>(Guid.Parse(ResourceId));
         var providers = await Http.AJList<LoadedProviderViewModel>();
         _provider = providers.First(p => p.ProviderId == Resource.ProviderId);
-        Resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(Resource.ProviderId.ToString());
+        Resource.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(Resource.ProviderId);
         Resource.ProviderConfiguration.SerializedConfiguration = Resource.SerializedProviderConfiguration;
     }
 }

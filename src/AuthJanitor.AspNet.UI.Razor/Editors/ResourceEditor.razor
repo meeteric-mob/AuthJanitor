@@ -68,6 +68,6 @@
     protected async Task ProviderTypeChanged(string providerType)
     {
         Value.ProviderId = ProviderIdentifier.FromString(providerType);
-        Value.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(providerType);
+        Value.ProviderConfiguration = await Http.AJGet<ProviderConfigurationViewModel>(Value.ProviderId);
     }
 }
