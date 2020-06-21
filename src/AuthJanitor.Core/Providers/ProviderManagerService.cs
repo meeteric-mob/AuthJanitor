@@ -1,13 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
-using AuthJanitor.Workflows;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AuthJanitor.Providers
 {
@@ -23,17 +21,11 @@ namespace AuthJanitor.Providers
         };
 
         private readonly IServiceProvider _serviceProvider;
-        private readonly IWorkflow _workflow;
-        private readonly IProviderConfiguration _providerConfiguration;
 
         public ProviderManagerService(
             IServiceProvider serviceProvider,
-            IReadOnlyList<LoadedProviderMetadata> loadedProviders,
-            IProviderConfiguration providerConfiguration,
-            IWorkflow workflow)
+            IReadOnlyList<LoadedProviderMetadata> loadedProviders)
         {
-            _providerConfiguration = providerConfiguration;
-            _workflow = workflow;
             _serviceProvider = serviceProvider;
             LoadedProviders = loadedProviders; 
         }
@@ -64,21 +56,9 @@ namespace AuthJanitor.Providers
         }
 
         public AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId) => ActivatorUtilities.CreateInstance(_serviceProvider, GetProviderMetadata(providerId).ProviderConfigurationType) as AuthJanitorProviderConfiguration;
+        
         public AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration) => JsonSerializer.Deserialize(serializedConfiguration, GetProviderMetadata(providerId).ProviderConfigurationType, SerializerOptions) as AuthJanitorProviderConfiguration;
-
-        public async Task ExecuteRekeyingWorkflow(WorkflowAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers)
-        {
-            await _workflow.ExecuteRekeyingWorkflow(logger, validPeriod, providers);
-            //await _hmm.ExecuteRekeyingWorkflow(logger, validPeriod, providers);
-        }
-
-        public bool TestProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration)
-        {
-            var metadata = GetProviderMetadata(providerId);
-            return _providerConfiguration.TestProviderConfiguration(metadata, serializedConfiguration);
-            //return _hmm.TestProviderConfiguration(metadata, serializedConfiguration);
-        }
-       
+        
     }
 
 }

@@ -12,9 +12,5 @@ namespace AuthJanitor.Providers
         IAuthJanitorProvider GetProviderInstance(ProviderIdentifier providerId);
         LoadedProviderMetadata GetProviderMetadata(ProviderIdentifier providerId);
         AuthJanitorProviderConfiguration GetProviderConfiguration(ProviderIdentifier providerId);
-
-        // Should be moved to another type
-        Task ExecuteRekeyingWorkflow(WorkflowAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers);
-        bool TestProviderConfiguration(ProviderIdentifier providerId, string serializedConfiguration);
     }
 }

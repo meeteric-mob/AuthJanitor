@@ -7,7 +7,7 @@ namespace AuthJanitor.Providers
 {
     public class ProviderConfiguration : IProviderConfiguration
     {
-        public bool TestProviderConfiguration(LoadedProviderMetadata metadata, string serializedConfiguration)
+        public bool IsConfigurationValid(LoadedProviderMetadata metadata, string serializedConfiguration)
         {
             try
             {

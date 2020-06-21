@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AuthJanitor.Workflows;
 
 namespace AuthJanitor.UI.Shared.MetaServices
 {
@@ -21,6 +22,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
         private readonly IDataStore<RekeyingTask> _rekeyingTasks;
         private readonly IDataStore<Resource> _resources;
         private readonly ISecureStorage _secureStorageProvider;
+        private readonly IWorkflow _workflow;
 
         private readonly IProviderStore _providerManagerService;
 
@@ -31,6 +33,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
             EventDispatcherMetaService eventDispatcherMetaService,
             IIdentityService identityService,
             IProviderStore providerManagerService,
+            IWorkflow workflow,
             IDataStore<ManagedSecret> managedSecrets,
             IDataStore<RekeyingTask> rekeyingTasks,
             IDataStore<Resource> resources,
@@ -43,6 +46,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
             _rekeyingTasks = rekeyingTasks;
             _resources = resources;
             _secureStorageProvider = secureStorageProvider;
+            _workflow = workflow;
         }
 
         public async Task CacheBackCredentialsForTaskIdAsync(Guid taskId, CancellationToken cancellationToken)
@@ -138,7 +142,7 @@ namespace AuthJanitor.UI.Shared.MetaServices
                 // Link in automation bindings from the outer flow
                 providers.ForEach(p => p.Credential = credential);
 
-                await _providerManagerService.ExecuteRekeyingWorkflow(rekeyingAttemptLog, secret.ValidPeriod, providers);
+                await _workflow.ExecuteWorkflow(rekeyingAttemptLog, secret.ValidPeriod, providers);
             }
             catch (Exception ex)
             {

@@ -14,9 +14,10 @@ namespace AuthJanitor
         public static void ConfigureProviderServices(this IServiceCollection serviceCollection, params Type[] loadedProviderTypes)
         {
             var loadedProviders = GetLoadedProviderMetadataList(loadedProviderTypes);
-            var rekeyWorkflow = new RekeyWorkflow();
-            var providerConfiguration = new ProviderConfiguration();
-            serviceCollection.AddSingleton<IProviderStore>((s) => new ProviderManagerService(s, loadedProviders, providerConfiguration, rekeyWorkflow));
+
+            serviceCollection.AddSingleton<IProviderConfiguration>(new ProviderConfiguration());
+            serviceCollection.AddSingleton<IWorkflow>(new RekeyWorkflow());
+            serviceCollection.AddSingleton<IProviderStore>((s) => new ProviderManagerService(s, loadedProviders));
         }
 
         private static IReadOnlyList<LoadedProviderMetadata> GetLoadedProviderMetadataList(params Type[] providerTypes)

@@ -10,7 +10,7 @@ namespace AuthJanitor.Workflows
 {
     public class RekeyWorkflow : IWorkflow
     {
-        public async Task ExecuteRekeyingWorkflow(WorkflowAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers)
+        public async Task ExecuteWorkflow(WorkflowAttemptLogger logger, TimeSpan validPeriod, IEnumerable<IAuthJanitorProvider> providers)
         {
             logger.LogInformation("########## BEGIN REKEYING WORKFLOW ##########");
             var rkoProviders = providers.OfType<IRekeyableObjectProvider>().ToList();
